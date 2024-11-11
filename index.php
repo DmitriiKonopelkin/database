@@ -17,8 +17,42 @@
     $colCountRow= $colCount->fetch_row();
     $cols= $colCountRow[0];
 
-    echo "<li>$table</li>"
+    echo '<li><a href="?table=' . urlencode($table) . '">' . htmlspecialchars($table) . ' (' . $cols . ')</a></li>';
+
  }
 
  echo "</ul>";
+
+ if(isset($_GET['table'])) {
+   $selected= $_GET['table'];
+   $structure= $conn->query("DESCRIBE " . $selected);
+   $fields=[];
+   while($row=$structure->fetch_assoc) {
+      $fields[]= $row;
+
+   }
+
+     $data= $conn->query("SELECT * FROM  " . $selected);
+   $rows=[];
+   while($row=$structure->fetch_assoc) {
+      $rows[]= $row;
+ }
+
+   echo "<table>"
+   echo "<tr>"
+   foreach($fields as $field) {
+      echo "<th>"
+      htmlspecialchars($field["Field"]);
+     echo "</th>"
+   }
+   echo "</tr>"
+   echo "<tr>"
+   foreach($rows as $row) {
+      echo "<td>"
+      htmlspecialchars($row);
+     echo "</td>"
+   }
+   echo "</tr>"
+   echo "</table>"
+ }
 ?>
